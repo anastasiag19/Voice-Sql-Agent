@@ -41,8 +41,8 @@
   {"id": 19, "category": "aggregation", "question_en": "How many students are there per major?", "question_ka": null,
    "gold_sql": "SELECT major, COUNT(*) FROM students GROUP BY major;"},
   {"id": 20, "category": "aggregation", "question_en": "What is the average grade per course department?", "question_ka": null,
-   "gold_sql": "SELECT c.department, ROUND(AVG(e.grade), 1) FROM enrollments e JOIN courses c ON e.course_id = c.course_id GROUP BY c.department;"}
-   {"id": 21, "category": "join_name", "question_en": "Which courses did Cynthia Diaz take in Fall 2025?", "question_ka": null,
+   "gold_sql": "SELECT c.department, ROUND(AVG(e.grade), 1) FROM enrollments e JOIN courses c ON e.course_id = c.course_id GROUP BY c.department;"},
+ {"id": 21, "category": "join_name", "question_en": "Which courses did Cynthia Diaz take in Fall 2025?", "question_ka": null,
    "gold_sql": "SELECT c.title FROM students s JOIN enrollments e ON s.student_id = e.student_id JOIN courses c ON e.course_id = c.course_id WHERE s.first_name = 'Cynthia' AND s.last_name = 'Diaz' AND e.semester = 'Fall 2025';"},
   {"id": 22, "category": "join_name", "question_en": "What is Cynthia Diaz's average grade?", "question_ka": null,
    "gold_sql": "SELECT ROUND(AVG(e.grade), 1) FROM students s JOIN enrollments e ON s.student_id = e.student_id WHERE s.first_name = 'Cynthia' AND s.last_name = 'Diaz';"},
@@ -57,6 +57,32 @@
   {"id": 27, "category": "join_name", "question_en": "How many courses has George Daniel taken in total?", "question_ka": null,
    "gold_sql": "SELECT COUNT(*) FROM students s JOIN enrollments e ON s.student_id = e.student_id WHERE s.first_name = 'George' AND s.last_name = 'Daniel';"},
   {"id": 28, "category": "join_name", "question_en": "How many courses has Michelle Ray taken in total?", "question_ka": null,
-   "gold_sql": "SELECT COUNT(*) FROM students s JOIN enrollments e ON s.student_id = e.student_id WHERE s.first_name = 'Michelle' AND s.last_name = 'Ray';"}
+   "gold_sql": "SELECT COUNT(*) FROM students s JOIN enrollments e ON s.student_id = e.student_id WHERE s.first_name = 'Michelle' AND s.last_name = 'Ray';"},
+   {"id": 29, "category": "null_tricky", "question_en": "How many enrollments are still in progress?", "question_ka": null,
+   "gold_sql": "SELECT COUNT(*) FROM enrollments WHERE grade IS NULL;"},
+  {"id": 30, "category": "null_tricky", "question_en": "How many students have at least one enrollment in progress?", "question_ka": null,
+   "gold_sql": "SELECT COUNT(DISTINCT student_id) FROM enrollments WHERE grade IS NULL;"},
+  {"id": 31, "category": "null_tricky", "question_en": "How many Computer Science majors have an enrollment in progress?", "question_ka": null,
+   "gold_sql": "SELECT COUNT(DISTINCT s.student_id) FROM students s JOIN enrollments e ON s.student_id = e.student_id WHERE s.major = 'Computer Science' AND e.grade IS NULL;"},
+  {"id": 32, "category": "null_tricky", "question_en": "How many students have never scored below 60 in any course?", "question_ka": null,
+   "gold_sql": "SELECT COUNT(*) FROM students WHERE student_id NOT IN (SELECT student_id FROM enrollments WHERE grade < 60);"},
+  {"id": 33, "category": "null_tricky", "question_en": "How many in-progress enrollments are in Computer Science courses?", "question_ka": null,
+   "gold_sql": "SELECT COUNT(*) FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Computer Science' AND e.grade IS NULL;"},
+  {"id": 34, "category": "null_tricky", "question_en": "How many instructors have taught more than 30 enrollments?", "question_ka": null,
+   "gold_sql": "SELECT COUNT(*) FROM (SELECT instructor_id FROM enrollments GROUP BY instructor_id HAVING COUNT(*) > 30);"},
 
+  {"id": 35, "category": "aggregation_hard", "question_en": "Which course department has the highest average grade?", "question_ka": null,
+   "gold_sql": "SELECT c.department FROM enrollments e JOIN courses c ON e.course_id = c.course_id GROUP BY c.department ORDER BY AVG(e.grade) DESC LIMIT 1;"},
+  {"id": 36, "category": "aggregation_hard", "question_en": "How many students have taken at least 5 courses?", "question_ka": null,
+   "gold_sql": "SELECT COUNT(*) FROM (SELECT student_id FROM enrollments GROUP BY student_id HAVING COUNT(*) >= 5);"},
+  {"id": 37, "category": "aggregation_hard", "question_en": "What is the average grade of Computer Science majors?", "question_ka": null,
+   "gold_sql": "SELECT ROUND(AVG(e.grade), 1) FROM students s JOIN enrollments e ON s.student_id = e.student_id WHERE s.major = 'Computer Science';"},
+  {"id": 38, "category": "aggregation_hard", "question_en": "How many enrollments are there in each semester?", "question_ka": null,
+   "gold_sql": "SELECT semester, COUNT(*) FROM enrollments GROUP BY semester;"},
+  {"id": 39, "category": "aggregation_hard", "question_en": "What is the average grade in Spring 2026?", "question_ka": null,
+   "gold_sql": "SELECT ROUND(AVG(grade), 1) FROM enrollments WHERE semester = 'Spring 2026';"},
+  {"id": 40, "category": "aggregation_hard", "question_en": "How many students have an average grade above 75?", "question_ka": null,
+   "gold_sql": "SELECT COUNT(*) FROM (SELECT student_id FROM enrollments GROUP BY student_id HAVING AVG(grade) > 75);"}
 ]
+
+
